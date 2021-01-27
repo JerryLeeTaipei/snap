@@ -9,7 +9,7 @@ grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 
 plugs:
-  dbus-slot:
+  dbus-plug:
     interface: dbus
     bus: session
     name: com.honeywell.cam
@@ -17,7 +17,7 @@ plugs:
 apps:
   dbus-c:
     command: dbus_c
-    plugs: [ dbus-slot ]
+    plugs: [ dbus-plug ]
 
 parts:
   dbus-c:
