@@ -7,8 +7,9 @@ Install:
 	
 Test:
 	Execute the following in a new terminal:
-		$ dbus-app.dbus-s
-		
+
+	$ dbus-app.dbus-s
+	
 	Execute the following in a new terminal:
 		$ dbus-app.dbus-c "Hi Jerry"
 		
