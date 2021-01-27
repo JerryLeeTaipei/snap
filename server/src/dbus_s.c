@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
     DBusError dberr;
     DBusConnection *dbconn;
- 
+    printf("%s:\n",__FILE__);
     dbus_error_init(&dberr);
  
     dbconn = dbus_bus_get(DBUS_BUS_SESSION, &dberr);
