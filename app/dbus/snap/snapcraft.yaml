@@ -26,8 +26,10 @@ slots:
 apps:
   dbus-s:
     command: dbus_s
+    slots: [ dbus-slot ]
   dbus-c:
     command: dbus_c
+    plugs: [ dbus-plug ]
 
 parts:
   dbus-s:
