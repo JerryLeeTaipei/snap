@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#define DBUS_INTERFACE_NAME "com.honeywell.cam"
  
 int db_send(DBusConnection *dbconn, char *word)
 {
@@ -10,7 +12,7 @@ int db_send(DBusConnection *dbconn, char *word)
     int i;
  
     dbmsg = dbus_message_new_signal("/client/signal/Object", // object name of the signal
-                                  "client.signal.Type",      // interface name of the signal
+                                  DBUS_INTERFACE_NAME,      // interface name of the signal
                                   "Test");                   // name of the signal
     if (!dbmsg) {
         return -1;

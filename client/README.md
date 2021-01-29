@@ -6,4 +6,5 @@ Install:
 	
 Test:
 	Execute the following in a new terminal:
+                $ snap connect dbus-c:dbus-plug dbus-s:dbus-slot
 		$ dbus-c "Hi Jerry"
