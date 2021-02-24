@@ -1,10 +1,26 @@
-export $(dbus-launch)
+INC_DBUS = `pkg-config --cflags dbus-1`
+LIB_DBUS = `pkg-config --libs dbus-1`
 
-dbus_s.o: dbus_s.c
-	gcc -Wall -c $< `pkg-config --cflags dbus-1`
+INCLUDES = ${INC_DBUS}
+LIBS = ${LIB_DBUS}
 
-dbus_s: dbus_s.o
-	gcc dbus_s.o -o dbus_s `pkg-config --libs dbus-1`
+CFLAGS   += ${INCLUDES}
+LDFLAGS  += ${LIBS}
 
-install: dbus_s
-	cp $< $(DESTDIR)$(PREFIX)/dbus_s
+EXE = dbus_s
+
+all: $(EXE)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $^
+
+$(EXE): $(EXE).o
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+clean:
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+install:
+	cp $(EXE) $(DESTDIR)$(PREFIX)/
+
+.PHONY: install clean

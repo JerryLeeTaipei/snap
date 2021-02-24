@@ -5,8 +5,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define DBUS_INTERFACE_NAME "com.honeywell.cam"
  
 static DBusHandlerResult
 filter_func(DBusConnection *connection, DBusMessage *message, void *usr_data)
@@ -15,7 +13,7 @@ filter_func(DBusConnection *connection, DBusMessage *message, void *usr_data)
     char *word = NULL;
     DBusError dberr;
  
-    if (dbus_message_is_signal(message, DBUS_INTERFACE_NAME, "Test")) {
+    if (dbus_message_is_signal(message, "client.signal.Type", "Test")) {
         dbus_error_init(&dberr);
         dbus_message_get_args(message, &dberr, DBUS_TYPE_STRING,
             &word, DBUS_TYPE_INVALID);
@@ -33,9 +31,7 @@ int main(int argc, char *argv[])
 {
     DBusError dberr;
     DBusConnection *dbconn;
-    char parm[256];
-
-    printf("%s:\n",__FILE__);
+ 
     dbus_error_init(&dberr);
  
     dbconn = dbus_bus_get(DBUS_BUS_SESSION, &dberr);
@@ -47,8 +43,14 @@ int main(int argc, char *argv[])
     if (!dbus_connection_add_filter(dbconn, filter_func, NULL, NULL)) {
         return -1;
     }
-    sprintf(parm, "type='signal',interface='%s'", DBUS_INTERFACE_NAME);
-    dbus_bus_add_match(dbconn, parm, &dberr);
+    
+    /*
+    	dbus_bus_add_match(dbconn, "type='signal',interface='client.signal.Type'", &dberr);
+    	dbus_bus_add_match(dbconn, "type='signal'", &dberr); 
+        
+        match rules is inclusive match, the above 2 work as the same as the below
+    */
+    dbus_bus_add_match(dbconn, "type='signal',interface='client.signal.Type'", &dberr);
     if (dbus_error_is_set(&dberr)) {
         dbus_error_free(&dberr);
         return -1;
