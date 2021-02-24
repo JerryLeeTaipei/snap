@@ -1,0 +1,17 @@
+name: hardware-observe-consumer
+base: core20
+version: '1.0'
+summary: Basic hardware-observe consumer snap
+description: A basic snap declaring a plug on hardware-observe
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+
+apps:
+    consumer:
+        command: bin/consumer
+        plugs: [hardware-observe]
+
+parts:
+    consumer:
+        plugin: dump 
+        source: .
