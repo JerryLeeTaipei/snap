@@ -1,4 +1,4 @@
-SUBDIRS := app/dbus  client  server
+SUBDIRS := app/dbus app/hardware-observe  client  server
 
 all: $(SUBDIRS)
 
