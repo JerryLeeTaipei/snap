@@ -15,20 +15,24 @@ apps:
     command: bin/pawrap $SNAP/usr/bin/paplay
     plugs:
     - audio-playback
+    - home
   record:
     command: bin/pawrap $SNAP/usr/bin/parecord
     plugs:
     - audio-playback
     - audio-record
+    - home
   recsimple:
     command: bin/pawrap $SNAP/bin/parec-simple
     plugs:
     - audio-playback
     - audio-record
+    - home
   pactl:
     command: bin/pawrap $SNAP/usr/bin/pactl
     plugs:
     - audio-playback
+    - home
 
 parts:
   pawrap:
