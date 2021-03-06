@@ -4,7 +4,7 @@ summary: test-snapd-audio-record snap
 description:
   test-snapd-audio-record
 confinement: strict
-base: core
+base: core20
 grade: devel
 
 environment:
@@ -66,7 +66,7 @@ parts:
       - usr/bin/paplay
       - usr/bin/parecord
       - usr/bin/pactl
-      - usr/lib/*/pulseaudio/libpulsecommon-8.0.so*
+      - usr/lib/*/pulseaudio/libpulsecommon-*.so*
       - usr/share/sounds/alsa/Noise.wav
       - usr/lib/*/libpulse.so*
       - usr/lib/*/libpulse-simple.so*
