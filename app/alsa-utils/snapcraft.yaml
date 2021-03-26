@@ -9,6 +9,9 @@ description: |
 confinement: strict
 base: core20
 grade: stable
+architectures:
+  - build-on: [amd64, arm64]
+    run-on: arm64
 
 apps:
     alsa-restore:
