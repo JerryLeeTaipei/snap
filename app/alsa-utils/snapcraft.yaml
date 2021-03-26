@@ -7,6 +7,7 @@ description: |
 
     The source can be found at: https://code.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/alsa-utils/
 confinement: strict
+base: core20
 grade: stable
 
 apps:
@@ -95,7 +96,7 @@ parts:
         source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/alsa-utils
         source-type: git
         source-branch: alsa-lib/xenial/1.1.2
-        configflags:
+        autotools-configure-parameters:
             - --prefix=/usr
             - --sysconfdir=/etc
             - --libexec=/usr/lib
@@ -113,7 +114,7 @@ parts:
         source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/alsa-utils
         source-type: git
         source-branch: alsa-utils/xenial/1.1.2
-        configflags:
+        autotools-configure-parameters:
             - --prefix=/usr
             - --sysconfdir=/etc
             - --libexec=/usr/lib

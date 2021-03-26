@@ -8,5 +8,5 @@ of the Linux kernel to manage audio.
 Building the snap is a matter of
 
 ```
- $ snapcraft
+ $ snapcraft  --destructive-mode
 ```
