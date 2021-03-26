@@ -1,0 +1,19 @@
+summary: Verify the project documentation is building without errors
+
+systems:
+    # Do not run on real hardware as documentation-builder is not available in
+    # all archs.
+    - -hw-ubuntu-core-16
+
+execute: |
+    # Need to install in devmode as otherwise the snap can't access our project
+    # home which is outside of the home directory of our current user.
+    snap install --devmode documentation-builder
+
+    outdir=$PROJECT_PATH/docs/build
+
+    cd $PROJECT_PATH/docs
+    /snap/bin/documentation-builder --output-path $outdir
+
+    # Ensure we have some files in the output directory
+    test `find $outdir | wc -l` -gt 0

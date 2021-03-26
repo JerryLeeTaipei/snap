@@ -1,0 +1,64 @@
+#
+# Copyright (C) 2017 Canonical Ltd
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+project: alsa-utils
+
+kill-timeout: 2h
+warn-timeout: 40m
+
+environment:
+    SNAP_NAME: alsa-utils
+    PROJECT_PATH: /home/${SNAP_NAME}
+    TESTSLIB: $PROJECT_PATH/tests/integration/lib
+    SNAP_CHANNEL: $(HOST:echo $SNAP_CHANNEL)
+    SNAP_ARCH: $(dpkg --print-architecture)
+    SNAP_AUTOCONNECT_CORE_PLUGS: alsa home
+    SNAP_AUTO_ALIASES: arecord aplay alsamixer amixer alsaucm alsactl speaker-test aseqnet alsatplg arecordmidi amidi alsaloop aconnect iecset alsabat aseqdump aplaymidi
+
+backends:
+    qemu:
+        systems:
+            - ubuntu-core-16:
+                username: test
+                password: test
+    external:
+        type: adhoc
+        environment:
+            SPREAD_EXTERNAL_ADDRESS: "$(HOST: echo ${SPREAD_EXTERNAL_ADDRESS:-localhost:8022})"
+        allocate: |
+            ADDRESS $SPREAD_EXTERNAL_ADDRESS
+        systems:
+            - hw-ubuntu-core-16:
+                username: $(HOST:echo $SPREAD_EXTERNAL_USER)
+                password: $(HOST:echo $SPREAD_EXTERNAL_PASSWORD)
+
+path: /home/alsa-utils
+
+exclude:
+  - .git
+
+prepare: |
+  . $TESTSLIB/prepare-all.sh
+
+suites:
+    tests/integration/main/:
+        summary: Full-system tests for the alsa-utils snap
+        systems:
+            - ubuntu-core-16
+            - hw-ubuntu-core-16
+        prepare: |
+            . $TESTSLIB/prepare.sh
+        restore-each: |
+            . $TESTSLIB/restore-each.sh

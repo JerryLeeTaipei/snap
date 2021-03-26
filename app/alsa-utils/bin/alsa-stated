@@ -1,0 +1,26 @@
+#!/bin/bash
+
+LOCAL_STATEFILE=$SNAP_COMMON/asound.state
+GADGET_STATEFILE=$SNAP/var/lib/alsa/asound.state
+
+store() {
+    echo "Caught SIGTERM, storing state..."
+    $SNAP/usr/sbin/alsactl -f $LOCAL_STATEFILE store
+}
+
+# Store the state on SIGTERM
+trap store SIGTERM
+
+# On first run we won't have our own state file yet
+if [ -f $LOCAL_STATEFILE ]; then
+  echo "Restoring from local state file"
+  $SNAP/usr/sbin/alsactl -f $LOCAL_STATEFILE restore
+
+# If the gadget snap provided one use that on first run
+elif [ -f $GADGET_STATEFILE ]; then
+  echo "Loading gadget state file"
+  $SNAP/usr/sbin/alsactl -f $GADGET_STATEFILE restore
+fi
+
+# Wait to be SIGTERM'd
+sleep infinity

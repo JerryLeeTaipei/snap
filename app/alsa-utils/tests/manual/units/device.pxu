@@ -1,0 +1,15 @@
+# FIXME: Convert this test back to an automated one. See LP #1665652
+id: alsa_utils/device/can_list_available_cards
+category_id: alsa_utils
+_description:
+  Validate that available ALSA sound cards can be listed with the
+  utilities the snap ships.
+plugin: manual
+_steps:
+ Execute the following command:
+ .
+ $ /snap/bin/aplay -L
+ .
+_verification:
+ Verify that the command prints out a list of available ALSA
+ devices.

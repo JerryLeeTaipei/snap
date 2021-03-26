@@ -1,0 +1,142 @@
+name: alsa-utils
+version: 1.1.2-6-dev
+summary: Utilities for configuring and using ALSA
+description: |
+    This package contains various tools to configure audio devices via ALSA
+    ALSA is the Advanced Linux Sound Architecture.
+
+    The source can be found at: https://code.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/alsa-utils/
+confinement: strict
+grade: stable
+
+apps:
+    alsa-restore:
+        daemon: simple
+        command: bin/alsa-stated
+        plugs: [alsa, device-conf]
+    speaker-test:
+        command: usr/bin/speaker-test
+        plugs: [ alsa, home ]
+        aliases: [speaker-test]
+    alsactl:
+        command: usr/sbin/alsactl
+        plugs: [ alsa, home ]
+        aliases: [alsactl]
+    amixer:
+        command: usr/bin/amixer
+        plugs: [ alsa, home ]
+        aliases: [amixer]
+    aplay:
+        command: usr/bin/aplay
+        plugs: [ alsa, home ]
+        aliases: [aplay]
+    aseqnet:
+        command: usr/bin/aseqnet
+        plugs: [ alsa, home ]
+        aliases: [aseqnet]
+    alsatplg:
+        command: usr/bin/alsatplg
+        plugs: [ alsa, home ]
+        aliases: [alsatplg]
+    arecordmidi:
+        command: usr/bin/arecordmidi
+        plugs: [ alsa, home ]
+        aliases: [arecordmidi]
+    amidi:
+        command: usr/bin/amidi
+        plugs: [ alsa, home ]
+        aliases: [amidi]
+    alsaloop:
+        command: usr/bin/alsaloop
+        plugs: [ alsa, home ]
+        aliases: [alsaloop]
+    alsaucm:
+        command: usr/bin/alsaucm
+        plugs: [ alsa, home ]
+        aliases: [alsaucm]
+    aconnect:
+        command: usr/bin/aconnect
+        plugs: [ alsa, home ]
+        aliases: [aconnect]
+    iecset:
+        command: usr/bin/iecset
+        plugs: [ alsa, home ]
+        aliases: [iecset]
+    alsabat:
+        command: usr/bin/alsabat
+        plugs: [ alsa, home ]
+        aliases: [alsabat]
+    aseqdump:
+        command: usr/bin/aseqdump
+        plugs: [ alsa, home ]
+        aliases: [aseqdump]
+    aplaymidi:
+        command: usr/bin/aplaymidi
+        plugs: [ alsa, home ]
+        aliases: [aplaymidi]
+    alsamixer:
+        command: usr/bin/alsamixer
+        plugs: [ alsa, home ]
+        aliases: [alsamixer]
+    arecord:
+        command: usr/bin/arecord
+        plugs: [ alsa, home ]
+        aliases: [arecord]
+
+plugs:
+    device-conf:
+        interface: content
+        content: alsa-conf
+        target: var/lib/alsa
+
+parts:
+    alsa-lib:
+        plugin: autotools
+        source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/alsa-utils
+        source-type: git
+        source-branch: alsa-lib/xenial/1.1.2
+        configflags:
+            - --prefix=/usr
+            - --sysconfdir=/etc
+            - --libexec=/usr/lib
+            - --libdir=/usr/lib
+            - --localstatedir=/var
+            - --with-configdir=/snap/alsa-utils/current/usr/share/alsa
+        stage:
+            - -usr/share/alsa/alsa.conf
+            - -usr/share/alsa/pcm
+            - -usr/share/alsa/topology/broadwell
+
+    alsa-utils:
+        after: [ alsa-lib ]
+        plugin: autotools
+        source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/alsa-utils
+        source-type: git
+        source-branch: alsa-utils/xenial/1.1.2
+        configflags:
+            - --prefix=/usr
+            - --sysconfdir=/etc
+            - --libexec=/usr/lib
+            - --libdir=/usr/lib
+            - --localstatedir=/var
+        build-packages:
+            - libfftw3-bin
+            - libfftw3-dev
+            - libncursesw5-dev
+            - libsamplerate0-dev
+            - xmlto
+            - gettext
+        stage-packages:
+            - libasound2-plugins
+            - libfftw3-double3
+            - libncursesw5
+            - libsamplerate0
+            - libtinfo5
+        prime:
+            - -usr/include
+
+    alsa-stated:
+        plugin: dump
+        source: bin
+        organize:
+            alsa-stated: bin/

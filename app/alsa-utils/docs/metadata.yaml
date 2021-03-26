@@ -1,0 +1,11 @@
+navigation:
+  - title: Introduction
+    children:
+      - title: About alsa-utils
+        location: index.md
+  - title: Reference
+    children:
+      - title: Available tools
+        location: reference/available-utilities.md
+      - title: Device-specific initial ALSA state configuration
+        location: reference/content-mixer-state.md

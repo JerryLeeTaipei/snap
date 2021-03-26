@@ -1,0 +1,47 @@
+# Copyright (c) 2017 Canonical Ltd.
+# All rights resevered.
+#
+# Written by:
+#   Simon Fels <simon.fels@canonical.com>
+
+unit: category
+id: alsa_utils
+_name: Alsa utilities
+
+id: alsa_utils/setup/automatic_plug_connection
+category_id: alsa_utils
+_description:
+  Ensure that all interfaces needed by the alsa-utils snap are
+  automatically connected.
+plugin: shell
+command:
+  snap interfaces | grep -Pzq ":home +alsa-utils"
+  snap interfaces | grep -Pzq ":alsa +alsa-utils"
+estimated_duration: 1s
+flags: preserve-locale
+
+id: alsa_utils/setup/automatic_aliases
+category_id: alsa_utils
+_description:
+  Ensure that all aliases provided by the snap are automatically setup.
+plugin: shell
+command:
+  test -x /snap/bin/speaker-test
+  test -x /snap/bin/aseqnet
+  test -x /snap/bin/alsatplg
+  test -x /snap/bin/arecordmidi
+  test -x /snap/bin/amidi
+  test -x /snap/bin/alsaloop
+  test -x /snap/bin/aconnect
+  test -x /snap/bin/iecset
+  test -x /snap/bin/alsabat
+  test -x /snap/bin/aseqdump
+  test -x /snap/bin/aplaymidi
+  test -x /snap/bin/alsactl
+  test -x /snap/bin/amixer
+  test -x /snap/bin/aplay
+  test -x /snap/bin/alsaucm
+  test -x /snap/bin/alsamixer
+  test -x /snap/bin/arecord
+estimated_duration: 1s
+flags: preserve-locale

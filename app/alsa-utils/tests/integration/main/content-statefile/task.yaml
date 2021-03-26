@@ -1,0 +1,86 @@
+summary: Verify that initial state file can be pulled over the content interface
+
+systems:
+    # Do not run on real hardware as this test requires an unsigned gadget snap
+    # in the image and we cannot guarantee that in this case.
+    - -hw-ubuntu-core-16
+
+prepare: |
+    . $TESTSLIB/snap-names.sh
+    snap list | grep $gadget_name | awk '{print $2}' > gadget_version
+
+restore: |
+    . $TESTSLIB/snap-names.sh
+    # Restore the original gadget snap so that any following tests don't suffer
+    # from our modified gadget
+    original_revision=`cat gadget_version`
+    current_revision=`snap list | grep $gadget_name | awk '{print $2}'`
+    if [ $current_revision -ne  $original_revision ]; then
+        snap revert --revision=$original_revision $gadget_name
+    fi
+
+execute: |
+    . $TESTSLIB/snap-names.sh
+    . $TESTSLIB/utilities.sh
+
+    # Load a dummy sound card so alsa is happy
+    modprobe snd-dummy
+    modprobe snd-pcm-oss
+    modprobe snd-mixer-oss
+
+    if [ $SPREAD_REBOOT = 0 ]; then
+        snap install --edge --devmode se-test-tools
+
+        # We need a custom gadget snap for this so let's fetch one from the store
+        # and modify it
+        snap download --stable $gadget_name
+        /snap/bin/se-test-tools.unsquashfs -d gadget ${gadget_name}_*.snap
+        cat << EOF >> gadget/meta/snap.yaml
+    slots:
+      alsa:
+        content: alsa-conf
+        interface: content
+        read:
+          - alsa-conf
+    EOF
+        mkdir gadget/alsa-conf
+        cp asound.state gadget/alsa-conf/
+        /snap/bin/se-test-tools.mksquashfs gadget $gadget_name.snap -comp xz -no-xattrs
+        snap install --dangerous $gadget_name.snap
+
+        systemctl stop snap.alsa-utils.alsa-restore
+        rm -f /var/snap/alsa-utils/common/asound.state # Simulate starting from scratch
+        # The content interface will be hooked up automatically on a real system,
+        # but we lack the assertions here so we need to fake it
+        snap connect alsa-utils:device-conf pc:alsa
+        /usr/lib/snapd/snap-discard-ns alsa-utils # Work around LP: #1645731
+        systemctl start snap.alsa-utils.alsa-restore
+        wait_for_systemd_service snap.alsa-utils.alsa-restore
+
+        # Make sure we found the right file
+        journalctl -u snap.alsa-utils.alsa-restore | grep "Loading gadget state file"
+
+        # Make sure there were no errors
+        systemctl show snap.alsa-utils.alsa-restore | grep ActiveState=active
+        systemctl show snap.alsa-utils.alsa-restore | grep SubState=running
+
+        # Make sure the mixer values represent what's in the state file
+        /snap/bin/amixer -c 0 get Master | grep "Front Left: 34 \[56%\] \[-19.80dB\] Capture \[off\]"
+        /snap/bin/amixer -c 0 get Master | grep "Front Right: 34 \[56%\] \[-19.80dB\] Capture \[off\]"
+
+        # Make sure changes are saved over a reboot
+        /snap/bin/amixer -c 0 set Master 50,50
+        REBOOT
+    fi
+
+    # Make sure alsa starts up with the dummy drivers present
+    systemctl restart snap.alsa-utils.alsa-restore
+    wait_for_systemd_service snap.alsa-utils.alsa-restore
+
+    # Make sure there were no errors
+    systemctl show snap.alsa-utils.alsa-restore | grep ActiveState=active
+    systemctl show snap.alsa-utils.alsa-restore | grep SubState=running
+
+    /snap/bin/amixer -c 0 get Master | grep "Front Left: 50 \[67%\] \[-15.00dB\] Capture \[off\]"
+    /snap/bin/amixer -c 0 get Master | grep "Front Right: 50 \[67%\] \[-15.00dB\] Capture \[off\]"
+

@@ -1,0 +1,27 @@
+summary: Verify snap installation was successful and correct
+
+execute: |
+    # Verify all necessary interfaces are connected (either by
+    # snap-declaration or manually in our prepare-sequence
+    # depending on how the tests are executed)
+    snap interfaces | grep -Pzq ":home +alsa-utils"
+    snap interfaces | grep -Pzq ":alsa +alsa-utils"
+
+    # Verify all tools we ship are available within the system
+    test -x /snap/bin/speaker-test
+    test -x /snap/bin/aseqnet
+    test -x /snap/bin/alsatplg
+    test -x /snap/bin/arecordmidi
+    test -x /snap/bin/amidi
+    test -x /snap/bin/alsaloop
+    test -x /snap/bin/aconnect
+    test -x /snap/bin/iecset
+    test -x /snap/bin/alsabat
+    test -x /snap/bin/aseqdump
+    test -x /snap/bin/aplaymidi
+    test -x /snap/bin/alsactl
+    test -x /snap/bin/amixer
+    test -x /snap/bin/aplay
+    test -x /snap/bin/alsaucm
+    test -x /snap/bin/alsamixer
+    test -x /snap/bin/arecord

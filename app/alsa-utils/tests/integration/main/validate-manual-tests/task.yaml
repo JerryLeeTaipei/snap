@@ -1,0 +1,17 @@
+summary: Validate all manual plainbox test cases so that we don't ship any broken ones
+
+execute: |
+    snap install --devmode --beta classic
+    cat <<-EOF > ${PROJECT_PATH}/validate-manual-tests.sh
+    #!/bin/sh
+    set -ex
+    apt update
+    apt install -y --force-yes python3-plainbox plainbox
+    cd ${PROJECT_PATH}/tests/manual
+    # see https://checkbox.readthedocs.io/en/latest/snappy.html#check-your-test-is-valid
+    # for more details on this.
+    python3 manage.py develop
+    python3 manage.py validate
+    EOF
+    chmod +x ${PROJECT_PATH}/validate-manual-tests.sh
+    sudo classic ${PROJECT_PATH}/validate-manual-tests.sh

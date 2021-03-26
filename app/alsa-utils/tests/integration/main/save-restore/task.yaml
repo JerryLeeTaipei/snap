@@ -1,0 +1,29 @@
+summary: Verify that mixer state is saved and restored on shutdown/startup
+
+execute: |
+    . $TESTSLIB/utilities.sh
+
+    # Load a dummy sound card so alsa is happy
+    modprobe snd-dummy
+    modprobe snd-pcm-oss
+    modprobe snd-mixer-oss
+
+    # Make sure alsa sees the dummy sound card
+    systemctl restart snap.alsa-utils.alsa-restore
+
+    wait_for_systemd_service snap.alsa-utils.alsa-restore
+
+    systemctl stop snap.alsa-utils.alsa-restore
+
+    wait_for_systemd_service_exit snap.alsa-utils.alsa-restore
+
+    # Make sure we saved a state file
+    test -f /var/snap/alsa-utils/common/asound.state
+
+    systemctl start snap.alsa-utils.alsa-restore
+
+    wait_for_systemd_service snap.alsa-utils.alsa-restore
+
+    # Make sure there were no errors
+    systemctl show snap.alsa-utils.alsa-restore | grep ActiveState=active
+    systemctl show snap.alsa-utils.alsa-restore | grep SubState=running
