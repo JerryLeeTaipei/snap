@@ -96,17 +96,26 @@ plugs:
 parts:
     alsa-lib:
         plugin: autotools
-        source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/alsa-utils
-        source-type: git
-        source-branch: alsa-lib/xenial/1.1.2
+        source: ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.2.4.tar.bz2
         autotools-configure-parameters:
             - --prefix=/usr
             - --sysconfdir=/etc
             - --libexec=/usr/lib
             - --libdir=/usr/lib
             - --localstatedir=/var
-            - --with-configdir=/snap/alsa-utils/current/usr/share/alsa
+            - --with-configdir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa
+            - --build x86_64-pc-linux-gnu
+            - --host aarch64-linux-gnu
         stage:
+            - -usr/include
+            - -usr/lib
+            - -usr/share/alsa/alsa.conf
+            - -usr/share/alsa/pcm
+            - -usr/share/alsa/topology/broadwell
+        prime:
+            - -usr/bin
+            - -usr/include
+            - -usr/lib/pkgconfig
             - -usr/share/alsa/alsa.conf
             - -usr/share/alsa/pcm
             - -usr/share/alsa/topology/broadwell
@@ -114,28 +123,28 @@ parts:
     alsa-utils:
         after: [ alsa-lib ]
         plugin: autotools
-        source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/alsa-utils
-        source-type: git
-        source-branch: alsa-utils/xenial/1.1.2
+        source: ftp://ftp.alsa-project.org/pub/utils/alsa-utils-1.2.4.tar.bz2
         autotools-configure-parameters:
             - --prefix=/usr
             - --sysconfdir=/etc
             - --libexec=/usr/lib
             - --libdir=/usr/lib
             - --localstatedir=/var
-        build-packages:
-            - libfftw3-bin
-            - libfftw3-dev
-            - libncursesw5-dev
-            - libsamplerate0-dev
-            - xmlto
-            - gettext
-        stage-packages:
-            - libasound2-plugins
-            - libfftw3-double3
-            - libncursesw5
-            - libsamplerate0
-            - libtinfo5
+            - --build x86_64-pc-linux-gnu
+            - --host aarch64-linux-gnu
+#        build-packages:
+#            - libfftw3-bin
+#            - libfftw3-dev
+#            - libncursesw5-dev
+#            - libsamplerate0-dev
+#            - xmlto
+#            - gettext
+#        stage-packages:
+#            - libasound2-plugins
+#            - libfftw3-double3
+#            - libncursesw5
+#            - libsamplerate0
+#            - libtinfo5
         prime:
             - -usr/include
 
