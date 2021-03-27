@@ -1,5 +1,5 @@
 name: alsa-utils
-version: 1.1.2-6-dev
+version: 1.2.4-j-1
 summary: Utilities for configuring and using ALSA
 description: |
     This package contains various tools to configure audio devices via ALSA
@@ -10,7 +10,7 @@ confinement: strict
 base: core20
 grade: stable
 architectures:
-  - build-on: [amd64, arm64]
+  - build-on: [amd64]
     run-on: arm64
 
 apps:
@@ -50,10 +50,6 @@ apps:
         command: usr/bin/amidi
         plugs: [ alsa, home ]
         aliases: [amidi]
-    alsaloop:
-        command: usr/bin/alsaloop
-        plugs: [ alsa, home ]
-        aliases: [alsaloop]
     alsaucm:
         command: usr/bin/alsaucm
         plugs: [ alsa, home ]
@@ -78,10 +74,6 @@ apps:
         command: usr/bin/aplaymidi
         plugs: [ alsa, home ]
         aliases: [aplaymidi]
-    alsamixer:
-        command: usr/bin/alsamixer
-        plugs: [ alsa, home ]
-        aliases: [alsamixer]
     arecord:
         command: usr/bin/arecord
         plugs: [ alsa, home ]
@@ -104,6 +96,7 @@ parts:
             - --libdir=/usr/lib
             - --localstatedir=/var
             - --with-configdir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa
+            - --with-plugindir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/alsa-lib
             - --build x86_64-pc-linux-gnu
             - --host aarch64-linux-gnu
         stage:
@@ -114,6 +107,7 @@ parts:
             - -usr/share/alsa/topology/broadwell
         prime:
             - -usr/bin
+            - -usr/lib
             - -usr/include
             - -usr/lib/pkgconfig
             - -usr/share/alsa/alsa.conf
@@ -123,6 +117,9 @@ parts:
     alsa-utils:
         after: [ alsa-lib ]
         plugin: autotools
+        build-environment:
+            - CFLAGS: "-I$SNAPCRAFT_PROJECT_DIR/parts/alsa-lib/install/usr/include"
+            - LDFLAGS: "-L$SNAPCRAFT_PROJECT_DIR/parts/alsa-lib/install/usr//lib"
         source: ftp://ftp.alsa-project.org/pub/utils/alsa-utils-1.2.4.tar.bz2
         autotools-configure-parameters:
             - --prefix=/usr
@@ -132,19 +129,8 @@ parts:
             - --localstatedir=/var
             - --build x86_64-pc-linux-gnu
             - --host aarch64-linux-gnu
-#        build-packages:
-#            - libfftw3-bin
-#            - libfftw3-dev
-#            - libncursesw5-dev
-#            - libsamplerate0-dev
-#            - xmlto
-#            - gettext
-#        stage-packages:
-#            - libasound2-plugins
-#            - libfftw3-double3
-#            - libncursesw5
-#            - libsamplerate0
-#            - libtinfo5
+            - --disable-alsamixer
+            - --disable-alsaloop
         prime:
             - -usr/include
 
