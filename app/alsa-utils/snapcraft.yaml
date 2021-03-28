@@ -68,13 +68,22 @@ apps:
 plugs:
     log-observe:
     hardware-observe:
+    home:
     device-conf:
         interface: content
         content: alsa-conf
         target: var/lib/alsa
 layout:
-    /usr/share/alsa/alsa.conf:
-        symlink: $SNAP/usr/share/alsa/alsa.conf
+    /usr/share/alsa:
+        symlink: $SNAP/usr/share/alsa
+
+#    /usr/share/alsa/alsa.conf:
+#        symlink: $SNAP/usr/share/alsa/alsa.conf
+#    /usr/share/alsa/cards/aliases.conf:
+#        symlink: $SNAP/usr/share/alsa/cards/aliases.conf
+#    /usr/share/alsa/pcm/default.conf:
+#        symlink: $SNAP/usr/share/alsa/pcm/default.conf
+#    /usr/share/alsa/pcm/dmix.conf
 
 parts:
     alsa-lib:
