@@ -1,5 +1,5 @@
 name: alsa-utils
-version: 1.2.4-j-1
+version: 1.2.4-j-2
 summary: Utilities for configuring and using ALSA
 description: |
     This package contains various tools to configure audio devices via ALSA
@@ -83,8 +83,8 @@ parts:
             - --libexec=/usr/lib
             - --libdir=/usr/lib
             - --localstatedir=/var
-            - --with-configdir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/share/alsa
-            - --with-plugindir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/alsa-lib
+            - --with-configdir=/usr/share/alsa
+            - --with-plugindir=/usr/lib/alsa-lib
             - --build x86_64-pc-linux-gnu
             - --host aarch64-linux-gnu
 
