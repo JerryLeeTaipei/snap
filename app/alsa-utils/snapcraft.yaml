@@ -13,6 +13,7 @@ architectures:
   - build-on: [amd64]
     run-on: arm64
 
+
 apps:
     alsa-restore:
         daemon: simple
@@ -21,65 +22,52 @@ apps:
     speaker-test:
         command: usr/bin/speaker-test
         plugs: [ alsa, home ]
-        aliases: [speaker-test]
     alsactl:
         command: usr/sbin/alsactl
         plugs: [ alsa, home ]
-        aliases: [alsactl]
     amixer:
         command: usr/bin/amixer
         plugs: [ alsa, home ]
-        aliases: [amixer]
     aplay:
         command: usr/bin/aplay
         plugs: [ alsa, home ]
-        aliases: [aplay]
     aseqnet:
         command: usr/bin/aseqnet
         plugs: [ alsa, home ]
-        aliases: [aseqnet]
     alsatplg:
         command: usr/bin/alsatplg
         plugs: [ alsa, home ]
-        aliases: [alsatplg]
     arecordmidi:
         command: usr/bin/arecordmidi
         plugs: [ alsa, home ]
-        aliases: [arecordmidi]
     amidi:
         command: usr/bin/amidi
         plugs: [ alsa, home ]
-        aliases: [amidi]
     alsaucm:
         command: usr/bin/alsaucm
         plugs: [ alsa, home ]
-        aliases: [alsaucm]
     aconnect:
         command: usr/bin/aconnect
         plugs: [ alsa, home ]
-        aliases: [aconnect]
     iecset:
         command: usr/bin/iecset
         plugs: [ alsa, home ]
-        aliases: [iecset]
     alsabat:
         command: usr/bin/alsabat
         plugs: [ alsa, home ]
-        aliases: [alsabat]
     aseqdump:
         command: usr/bin/aseqdump
         plugs: [ alsa, home ]
-        aliases: [aseqdump]
     aplaymidi:
         command: usr/bin/aplaymidi
         plugs: [ alsa, home ]
-        aliases: [aplaymidi]
     arecord:
         command: usr/bin/arecord
         plugs: [ alsa, home ]
-        aliases: [arecord]
 
 plugs:
+    log-observe:
+    hardware-observe:
     device-conf:
         interface: content
         content: alsa-conf
@@ -99,20 +87,15 @@ parts:
             - --with-plugindir=/snap/$SNAPCRAFT_PROJECT_NAME/current/usr/lib/alsa-lib
             - --build x86_64-pc-linux-gnu
             - --host aarch64-linux-gnu
-        stage:
-            - -usr/include
-            - -usr/lib
-            - -usr/share/alsa/alsa.conf
-            - -usr/share/alsa/pcm
-            - -usr/share/alsa/topology/broadwell
-        prime:
-            - -usr/bin
-            - -usr/lib
-            - -usr/include
-            - -usr/lib/pkgconfig
-            - -usr/share/alsa/alsa.conf
-            - -usr/share/alsa/pcm
-            - -usr/share/alsa/topology/broadwell
+
+#    libraries:
+#        after: [ alsa-lib ]
+#        plugin: dump
+#        source: $SNAPCRAFT_PROJECT_DIR/parts/alsa-lib/build/src/.libs
+#        prime:
+#            - -usr/lib/*.so
+#        organize: 
+#            "*.so": usr/lib/*.so
 
     alsa-utils:
         after: [ alsa-lib ]
@@ -131,8 +114,6 @@ parts:
             - --host aarch64-linux-gnu
             - --disable-alsamixer
             - --disable-alsaloop
-        prime:
-            - -usr/include
 
     alsa-stated:
         plugin: dump
