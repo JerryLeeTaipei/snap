@@ -1,5 +1,5 @@
 name: alsa-utils
-version: 1.2.4-j-2
+version: 1.2.4-j-5
 summary: Utilities for configuring and using ALSA
 description: |
     This package contains various tools to configure audio devices via ALSA
@@ -72,6 +72,9 @@ plugs:
         interface: content
         content: alsa-conf
         target: var/lib/alsa
+layout:
+    /usr/share/alsa/alsa.conf:
+        symlink: $SNAP/usr/share/alsa/alsa.conf
 
 parts:
     alsa-lib:
@@ -87,6 +90,9 @@ parts:
             - --with-plugindir=/usr/lib/alsa-lib
             - --build x86_64-pc-linux-gnu
             - --host aarch64-linux-gnu
+#        stage:
+#            - -usr/share/alsa/alsa.conf
+#            - -usr/share/alsa/pcm
 
 #    libraries:
 #        after: [ alsa-lib ]
