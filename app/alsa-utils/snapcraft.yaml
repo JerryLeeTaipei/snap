@@ -1,5 +1,5 @@
 name: alsa-utils
-version: 1.2.4-j-5
+version: 1.2.4-j-17
 summary: Utilities for configuring and using ALSA
 description: |
     This package contains various tools to configure audio devices via ALSA
@@ -66,9 +66,6 @@ apps:
         plugs: [ alsa, home ]
 
 plugs:
-    log-observe:
-    hardware-observe:
-    home:
     device-conf:
         interface: content
         content: alsa-conf
@@ -76,14 +73,6 @@ plugs:
 layout:
     /usr/share/alsa:
         symlink: $SNAP/usr/share/alsa
-
-#    /usr/share/alsa/alsa.conf:
-#        symlink: $SNAP/usr/share/alsa/alsa.conf
-#    /usr/share/alsa/cards/aliases.conf:
-#        symlink: $SNAP/usr/share/alsa/cards/aliases.conf
-#    /usr/share/alsa/pcm/default.conf:
-#        symlink: $SNAP/usr/share/alsa/pcm/default.conf
-#    /usr/share/alsa/pcm/dmix.conf
 
 parts:
     alsa-lib:
@@ -99,18 +88,6 @@ parts:
             - --with-plugindir=/usr/lib/alsa-lib
             - --build x86_64-pc-linux-gnu
             - --host aarch64-linux-gnu
-#        stage:
-#            - -usr/share/alsa/alsa.conf
-#            - -usr/share/alsa/pcm
-
-#    libraries:
-#        after: [ alsa-lib ]
-#        plugin: dump
-#        source: $SNAPCRAFT_PROJECT_DIR/parts/alsa-lib/build/src/.libs
-#        prime:
-#            - -usr/lib/*.so
-#        organize: 
-#            "*.so": usr/lib/*.so
 
     alsa-utils:
         after: [ alsa-lib ]
