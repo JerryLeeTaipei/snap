@@ -1,0 +1,158 @@
+name: ammp-wifi-ap
+version: '30'
+confinement: strict
+summary: WiFi Access Point based on hostapd - for AMMP Edge devices
+description: |
+  This snap is implementing a WiFi access point based on hostapd and allows
+  to easily share a internet connection or just create a network others can
+  easily connect to.
+  Please find the source of this snap at:
+  https://code.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/wifi-ap
+
+grade: stable
+base: core20
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+    run-on: arm64
+
+apps:
+  config:
+    command: bin/client config
+    plugs:
+      - network
+  status:
+    command: bin/client status
+    plugs:
+      - network
+  setup-wizard:
+    command: bin/client wizard
+    plugs:
+      - network
+  management-service:
+    adapter: full
+    command: bin/service
+    daemon: simple
+    plugs:
+      - network-bind
+      - network-control
+      - firewall-control
+      - network-manager
+  automatic-setup:
+    command: bin/automatic-setup.sh
+    daemon: simple
+    plugs:
+      - network
+parts:
+  common:
+    plugin: dump
+    source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/wifi-ap
+    source-type: git
+    source-tag: '30'
+    prime:
+      - copyright.hostapd
+      - bin/config-internal.sh
+      - bin/ap.sh
+      - bin/helper.sh
+      - bin/automatic-setup.sh
+      - conf/default-config
+  network-utils:
+    plugin: nil
+    stage-packages:
+      - iw
+      - wireless-tools
+      - libiw30
+    organize:
+      sbin: bin
+    filesets:
+      binaries:
+        - bin/iw
+        - bin/iwconfig
+    prime:
+      - $binaries
+  service:
+    plugin: make
+    source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/wifi-ap
+    source-type: git
+    source-tag: '30'
+    build-snaps: [go/1.9/stable]
+    override-pull: |
+      snapcraftctl pull
+      patch -p1 < $SNAPCRAFT_PROJECT_DIR/ammp.patch
+    override-build: |
+      set -ex
+      export GOPATH=$(mktemp -d)
+      export GOOS=linux
+      export GOARCH=arm64
+      (src_path="$GOPATH"/src/launchpad.net/wifi-ap
+      mkdir -p "$src_path"
+      cp -a cmd/ "$src_path"
+      cp -a conf/ "$src_path"
+      cd "$src_path"
+      go get -t -d ...
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin/
+      for d in client service ; do
+        cd $GOPATH/src/launchpad.net/wifi-ap/cmd/"$d"
+        go build
+        cp -f "$d" $SNAPCRAFT_PART_INSTALL/bin/
+      done)
+      rm -rf "$GOPATH"
+  dnsmasq:
+    plugin: make
+    source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/wifi-ap
+    source-type: git
+    source-branch: dnsmasq/2.75
+    build-packages:
+      - build-essential
+    make-parameters:
+      - PREFIX=/
+      - CC=aarch64-linux-gnu-gcc
+    organize:
+      sbin/dnsmasq: bin/dnsmasq
+    filesets:
+      binaries:
+        - bin/dnsmasq
+    prime:
+      - $binaries
+  hostapd:
+    plugin: make
+    source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/wifi-ap
+    source-type: git
+    source-branch: hostapd/2.8
+    build-packages:
+      - build-essential
+      - pkg-config
+      - libnl-3-dev
+      - libnl-genl-3-dev
+      - libnl-route-3-dev
+      - libssl-dev:arm64
+    make-parameters:
+      - BINDIR=/bin
+      - CC=aarch64-linux-gnu-gcc
+    filesets:
+      binaries:
+        - bin/hostapd
+        - bin/hostapd_cli
+    prime:
+      - $binaries
+  nmcli:
+    plugin: nil
+    stage-packages:
+      - network-manager
+      - libatm1
+      - libslang2
+    organize:
+      usr/bin/nmcli: bin/nmcli
+
+slots:
+  something-else:
+    interface: content
+    content: hello
+    read:
+      - $SNAP/bin
+  control:
+    interface: content
+    write:
+      - $SNAP_DATA/sockets
+    content: blah
