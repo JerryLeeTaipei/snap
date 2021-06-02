@@ -126,8 +126,16 @@ parts:
     build-packages:
       - bison
       - flex
+  openssl-1:
+    plugin: make
+    source: $SNAPCRAFT_PROJECT_DIR/openssl.tar.gz
+    make-parameters:
+      - BINDIR=/bin
+      - CROSS_COMPILE=aarch64-linux-gnu-
+      - INSTALL=$SNAPCRAFT_PROJECT_DIR/parts/openssl-1/install/usr
+#      - CC=aarch64-linux-gnu-gcc
   hostapd:
-    after: [ libnl-3-200 ]
+    after: [ libnl-3-200, openssl-1]
 #    plugin: make
 #    source: hostapd-2.9.tar.gz
     plugin: make
