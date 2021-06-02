@@ -1,4 +1,4 @@
-name: ammp-wifi-ap
+name: wifi-ap-20
 version: '30'
 confinement: strict
 summary: WiFi Access Point based on hostapd
