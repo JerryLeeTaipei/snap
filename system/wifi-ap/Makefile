@@ -1,5 +1,7 @@
-# "Failed to update the package cache: Some files could not be downloaded:"
-# Prefix "[arch=amd64]" to https://. For ex., deb [arch=amd64] https:
+# "/usr/include/openssl/e_os2.h:13:11: fatal error: openssl/opensslconf.h: No such file or directory"
+# ==> 
+#     $ sudo ln -s /usr/include/x86_64-linux-gnu/openssl/opensslconf.h /usr/include/openssl/opensslconf.h
+#
 
 all:
 	snapcraft --destructive-mode --enable-experimental-target-arch --target-arch=arm64

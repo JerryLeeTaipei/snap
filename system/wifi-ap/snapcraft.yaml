@@ -1,7 +1,7 @@
 name: ammp-wifi-ap
 version: '30'
 confinement: strict
-summary: WiFi Access Point based on hostapd - for AMMP Edge devices
+summary: WiFi Access Point based on hostapd
 description: |
   This snap is implementing a WiFi access point based on hostapd and allows
   to easily share a internet connection or just create a network others can
@@ -14,7 +14,7 @@ base: core20
 
 architectures:
   - build-on: amd64
-  - build-on: arm64
+#  - build-on: arm64
     run-on: arm64
 
 apps:
@@ -45,6 +45,7 @@ apps:
     plugs:
       - network
 parts:
+  
   common:
     plugin: dump
     source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/wifi-ap
@@ -57,20 +58,20 @@ parts:
       - bin/helper.sh
       - bin/automatic-setup.sh
       - conf/default-config
-  network-utils:
-    plugin: nil
-    stage-packages:
-      - iw
-      - wireless-tools
-      - libiw30
-    organize:
-      sbin: bin
-    filesets:
-      binaries:
-        - bin/iw
-        - bin/iwconfig
-    prime:
-      - $binaries
+#  network-utils:
+#    plugin: nil
+#    stage-packages:
+#      - iw
+#      - wireless-tools
+#      - libiw30
+#    organize:
+#      sbin: bin
+#    filesets:
+#      binaries:
+#        - bin/iw
+#        - bin/iwconfig
+#    prime:
+#      - $binaries
   service:
     plugin: make
     source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/wifi-ap
@@ -115,7 +116,20 @@ parts:
         - bin/dnsmasq
     prime:
       - $binaries
+  libnl-3-200:
+    plugin: autotools
+    source: libnl-3.2.25.tar.gz
+    autotools-configure-parameters:
+      - --prefix=/usr
+      - --build x86_64-pc-linux-gnu
+      - --host aarch64-linux-gnu
+    build-packages:
+      - bison
+      - flex
   hostapd:
+    after: [ libnl-3-200 ]
+#    plugin: make
+#    source: hostapd-2.9.tar.gz
     plugin: make
     source: https://git.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/wifi-ap
     source-type: git
@@ -126,24 +140,31 @@ parts:
       - libnl-3-dev
       - libnl-genl-3-dev
       - libnl-route-3-dev
-      - libssl-dev:arm64
+      - libssl-dev
+#    stage-packages:
+#      - libnl-3-200:arm64
+#      - libnl-genl-3-200
+#      - libnl-route-3-200
+#      - libssl1.1
     make-parameters:
       - BINDIR=/bin
       - CC=aarch64-linux-gnu-gcc
+#      - CFLAGS=-I$SNAPCRAFT_PROJECT_DIR/parts/libnl-3-200/install/usr/include
+#      - LDFLAGS=-L$SNAPCRAFT_PROJECT_DIR/parts/libnl-3-200/install/usr/lib
     filesets:
       binaries:
         - bin/hostapd
         - bin/hostapd_cli
     prime:
       - $binaries
-  nmcli:
-    plugin: nil
-    stage-packages:
-      - network-manager
-      - libatm1
-      - libslang2
-    organize:
-      usr/bin/nmcli: bin/nmcli
+#  nmcli:
+#    plugin: nil
+#    stage-packages:
+#      - network-manager
+#      - libatm1
+#      - libslang2
+#    organize:
+#      usr/bin/nmcli: bin/nmcli
 
 slots:
   something-else:
