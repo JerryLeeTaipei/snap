@@ -1,6 +1,6 @@
 
 all:
-	snapcraft --destructive-mode
+	snapcraft --destructive-mode --debug
 
 
 clean:
