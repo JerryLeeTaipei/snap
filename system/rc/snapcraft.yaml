@@ -1,0 +1,42 @@
+name: rc
+version: '1.1'
+confinement: strict
+summary: Demo teh usage of daemon in snap
+description: |
+  Please find the source of this snap at:
+  https://github.com/snapcore/snapd/tree/master/tests/lib/snaps/test-snapd-service
+
+grade: stable
+base: core20
+
+slots:
+    shared-execute-slot:
+        interface: content
+        content: mybin
+        read:
+            - $SNAP/bin
+
+plugs:
+    shared-execute-plug:
+        interface: content
+        content: mybin
+        target: $SNAP/extra-bin
+
+
+apps:
+    hello:
+        command: bin/hello
+        slots: [shared-execute-slot]
+    rc:
+        command: bin/rc
+        daemon: simple
+        plugs: [shared-execute-plug]
+
+parts:
+    common:
+        plugin: make
+        source: src
+
+
+
+
