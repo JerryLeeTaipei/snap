@@ -9,6 +9,20 @@ description: |
 grade: stable
 base: core20
 
+slots:
+    shared-content-slot:
+        interface: content
+        content: mybin
+        read:
+            - $SNAP/bin
+
+plugs:
+    shared-content-plug:
+        interface: content
+        content: mybin
+        target: $SNAP/extra-bin
+
+
 apps:
     test-snapd-service:
         command: bin/start
@@ -66,19 +80,23 @@ apps:
         daemon: simple
         stop-command: bin/stop 60
         stop-timeout: 10s
-    fcc-service:
-        command: bin/start-fcc
-        daemon: simple        
+    hello:
+        command: bin/hello
+        slots: [shared-content-slot]
+    test-hello:
+        command: bin/test-hello
+        daemon: simple
+        plugs: [shared-content-plug]
 
 parts:
     common:
         plugin: dump
         source: .
         stage: [bin]
-    openssl-1:
+    hello:
         plugin: make
-        source: $SNAPCRAFT_PROJECT_DIR/openssl.x86.tar.gz
-        make-parameters:
-            - BINDIR=/bin
-            - INSTALL=$SNAPCRAFT_PROJECT_DIR/parts/openssl-1/install/usr
+        source: src/hello
+
+
+
 

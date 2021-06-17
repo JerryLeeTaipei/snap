@@ -1,0 +1,5 @@
+#!/bin/sh
+
+trap "echo reloading reloading reloading" HUP
+echo "$SNAP"
+$SNAP/bin/hello
