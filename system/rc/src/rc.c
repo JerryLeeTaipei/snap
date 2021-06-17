@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
-
+#include <syslog.h>
 
 extern char **environ;
 
@@ -20,10 +20,16 @@ int main (int argc, char *argv[])
         execlp("hello","hello",(char*)NULL);
         _exit(1);   // exec never returns
     }
+    setlogmask (LOG_UPTO (LOG_NOTICE));
+
+    openlog ("rc", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
+
+    syslog (LOG_NOTICE, "Program started by User %d", getuid ());
 
     while (1){
-        printf ("rc\n");
+        syslog (LOG_NOTICE, "running");
         sleep(15);
     }
+closelog ();
   return 0;
 }
