@@ -1,5 +1,5 @@
 name: rc
-version: '1.3'
+version: '1.4'
 confinement: strict
 summary: Demo teh usage of daemon in snap
 description: |
@@ -30,12 +30,29 @@ apps:
     rc:
         command: bin/rc
         daemon: simple
-        plugs: [shared-execute-plug]
+        plugs:
+            - hardware-observe
+            - shared-execute-plug
+
 
 parts:
     common:
+        after: [ lspci ]
         plugin: make
         source: src
+        build-packages:
+            - libudev-dev
+        make-parameters:
+            - DNS=no
+            - SHARED=yes
+            - CFLAGS=-I$SNAPCRAFT_PROJECT_DIR/parts/lspci/build
+            - LDFLAGS="-L$SNAPCRAFT_PROJECT_DIR/parts/lspci/build/lib -lpci -ludev -lresolv"
+    lspci:
+        plugin: make
+        source: https://github.com/pciutils/pciutils.git
+
+
+
 
 
 
