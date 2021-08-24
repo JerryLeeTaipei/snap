@@ -1,0 +1,34 @@
+name: lenovo-wwan-doc-se30
+version: 0.0.7
+summary: Documentation about SE30
+description: |
+    This package contains documents  for SE30
+
+confinement: devmode
+base: core20
+grade: devel
+architectures:
+  - build-on: [amd64]
+    run-on: amd64
+
+apps:
+    install-doc:
+        command: install.sh
+        plugs: 
+            - home
+
+
+parts:
+    install-doc:
+        source: bin
+        plugin: dump
+    prepare-doc:
+        plugin: dump
+        source: doc
+        organize:
+            Lenovo_Limited_Warranty.pdf: opt/share/doc/Lenovo_Limited_Warranty.pdf
+            'Generic safety and compliance notices.pdf': opt/share/doc/'Generic safety and compliance notices.pdf'
+            'Open source information.pdf': opt/share/doc/'Open source information.pdf'
+            'Software Product License Agreement.pdf': opt/share/doc/'Software Product License Agreement.pdf'
+
+
