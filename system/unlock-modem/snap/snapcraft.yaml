@@ -10,10 +10,16 @@ confinement: devmode
 apps:
   hello:
     command: usr/local/bin/hello
+  bash:
+    command: usr/local/bin/bash
 
 parts:
   gnu-hello:
     source: http://ftp.gnu.org/gnu/hello/hello-2.10.tar.gz
     plugin: autotools
-
+    stage: [-usr/local/share/info/dir]
+  gnu-bash:
+    source: http://ftp.gnu.org/gnu/bash/bash-4.3.tar.gz
+    plugin: autotools
+    stage: [-usr/local/share/info/dir]
 
