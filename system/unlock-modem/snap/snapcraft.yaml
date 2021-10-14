@@ -1,0 +1,19 @@
+name: hello
+base: core20
+version: '0.1'
+summary: GNU Hello, the "hello world" snap
+description: |
+  GNU hello prints a friendly greeting.
+grade: devel
+confinement: devmode
+
+apps:
+  hello:
+    command: usr/local/bin/hello
+
+parts:
+  gnu-hello:
+    source: http://ftp.gnu.org/gnu/hello/hello-2.10.tar.gz
+    plugin: autotools
+
+
