@@ -12,6 +12,8 @@ apps:
     command: usr/local/bin/hello
   bash:
     command: usr/local/bin/bash
+  mbim-connect:
+    command: usr/local/bin/mbim-connect
 
 parts:
   gnu-hello:
@@ -22,4 +24,6 @@ parts:
     source: http://ftp.gnu.org/gnu/bash/bash-4.3.tar.gz
     plugin: autotools
     stage: [-usr/local/share/info/dir]
-
+  mbim-connect:
+    plugin: make
+    source: src
