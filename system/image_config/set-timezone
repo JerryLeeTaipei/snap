@@ -1,0 +1,25 @@
+#! /bin/sh
+
+set -e
+
+DBURL="http://www.geoplugin.net/csv.gp?ip="
+
+# query geoip database on boot and set the timezone accordingly
+timeout="0"
+while ! wget -q -O- $DBURL >/dev/null 2>&1; do
+    if [ "$timeout" -ge "3" ]; then
+        echo "timed out, giving up waiting..."
+        exit 0
+    fi
+    echo "can not reach $DBURL, sleeping for 30 sec"
+    sleep 30
+done
+
+MYTZ="$(wget -q -O- $DBURL|grep geoplugin_timezone|sed 's/geoplugin_timezone,//')"
+
+while ! timedatectl set-timezone "$MYTZ"; do
+    echo "timezone control interface not connected yet, please run:"
+    echo "snap connect $SNAP_NAME:timezone-control"
+    echo "sleeping for 10 sec"
+    sleep 10
+done
